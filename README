@@ -1,0 +1,10 @@
+ It's a fork [1] of the simple browser example, with jQuery; on the Chromeless side, we have support to save pages to the disk; Testing 3rd-party JS APIs to HTML to readable text aquisition; Exploration on the idea of using multiple JS vendor scripts to obtain texts from pages for offline read mode; 
+
+This repository is temporary and should be moved to the CHromeless GAllery as an app soon. 
+
+The directory ./vendor is 3rd-party. 
+
+See initial design post 
+
+http://gecko.mgalli.com/an-experimental-e-reader-app-written-in-html
+
