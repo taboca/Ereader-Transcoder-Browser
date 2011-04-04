@@ -246,10 +246,15 @@ var readability = {
 		}
 
 		/* remove all stylesheets */
-		for (var k=0;k < docFrame.styleSheets.length; k++) {
-			if (docFrame.styleSheets[k].href != null && docFrame.styleSheets[k].href.lastIndexOf("readability") == -1) {
+		var links = docFrame.getElementsByTagName("link");
+		for (var k=0; k<links.length; k++) {
+			var link = links[k]; 
+                        var parentNode = link.parentNode; 
+                        parentNode.removeChild(link);
+			/*if (docFrame.styleSheets[k].href != null && docFrame.styleSheets[k].href.lastIndexOf("readability") == -1) {
 				docFrame.styleSheets[k].disabled = true;
 			}
+ 			*/
 		}
 
 		/* Remove all style tags in head (not doing this on IE) - TODO: Why not? */

@@ -75,7 +75,7 @@ body {
       <div><button id="back">&lt;&lt</button></div>
       <div><button id="forward">&gt;</button></div>
       <div><button id="reload">R</button></div>
-      <div id="urlbox"><form><input id="urlinput" type="text" /></form></div>
+      <div id="urlbox"><form><input id="urlinput" type="text" value="help.html" /></form></div>
       <div id="go"><button id="go">go</button></div>
       <div id="stop"><button id="stop">stop</button></div>
       <div id="save"><button id="save">save</button></div>
@@ -130,8 +130,8 @@ function list() {
 
 function save() { 
 
+    var docTitle = $('#contentFrame').contents().find('title').text(); 
     mutation();
-    //var data = $('#contentFrame').contents().html();
     var data = $('#contentFrame').contents().find("html").html();
     var userTempDirectory = require('app-paths').tmpDir; 
     var file = require("file");
@@ -142,8 +142,7 @@ function save() {
     try { 
        file.mkpath(outputDir);
     } catch(i) { } 
-    var docTitle = $('#contentFrame').contents().find('title').text(); 
-    file.write(require('path').join(outputDir,docTitle),data);
+    file.write(require('path').join(outputDir,docTitle + ".html"),data);
 } 
 
 function mutation() { 	
@@ -154,9 +153,9 @@ function mutation() {
 	docFrame = document.getElementById("contentFrame").contentDocument; 
 	readability.init();
         var style = docFrame.createElement('style');
-        docFrame.getElementsByTagName('head')[0].appendChild(style);
-        var styleZero = docFrame.styleSheets[document.styleSheets.length - 1]
-        styleZero.insertRule("html { background:white; } body { margin:2em } .style-plain { font-family: verdana }", 0);
+        docFrame.getElementsByTagName('head')[0].innerHTML="";
+        //var styleZero = docFrame.styleSheets[document.styleSheets.length - 1]
+        //styleZero.insertRule("html { background:white; } body { margin:2em } .style-plain { font-family: verdana }", 0);
 }
 
 // the ready handler would run once the browser process was initialized?
