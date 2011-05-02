@@ -1,24 +1,44 @@
-<!-- This webpage controls the top level rendering of the browser.  it's
-     the first document that is loaded. and defines the look and feel of
-     the browser.  --> 
-
 <html>
   <head>
-    <!-- What if the title of the top level document dictated the os level
-         process/application name? -->
+  <script type="text/javascript" src="jquery-min.js"></script>
+  <script type="text/javascript" src="vendor/readability-0.5.1/js/readability.js"></script>
+  </head>
+
     <title>WebbyFox</title>
 
-<!-- given that we're locked to a recent version of the gecko rendering engine,
-     we can use snazzy modern features like flexbox layout. -->
     <style type="text/css" media="screen">
 
 body {
-  background-color: #999;
   padding: 0;
   margin: 0;
 }
 
+#panel { 
+  margin:1em;
+  background-color:lightblue;
+  padding:1em;
+} 
+
+.fileitem { 
+  font-size:80%; 
+  border-bottom:1px solid gray; 
+  padding:.3em;
+  margin:.5em;
+  background-color:#eee;
+} 
+
+li.fileitem:hover { 
+  cursor:pointer;
+  -moz-box-shadow: 10px 5px 5px #ccc;
+} 
+ 
+.selected { 
+  -moz-box-shadow: 10px 5px 5px black;
+} 
+
+
 #browserHeader {
+  margin:1em;
   width: 100%;
   text-align: center;
   padding:2px;
@@ -29,14 +49,69 @@ body {
 #browserContentArea {
   -moz-box-flex: 1;
   display: -moz-box;
-  border: 1px solid green;
 }
 
-#contentFrame {
-  border: 1px solid blue;
+#sidebarContent { 
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  width:2px; 
+  height:100%; 
+} 
+
+#sidebarRightContent { 
+  width:60px; 
+  height:100%; 
+  background: white -moz-linear-gradient(right,  #544,  transparent);
+} 
+
+#contentFrameSidebar { 
   -moz-box-flex: 1;
   width: 100%;
   height: 100%;
+  margin:1em;
+  border:0px;
+  background:none;
+} 
+
+
+.line { 
+  background: white -moz-linear-gradient(right,  #555, transparent, transparent);
+  width:100%;
+  height:2px;
+} 
+
+.expanded { 
+  -moz-box-flex:1;
+  width:400px;
+} 
+
+.collapsed { 
+  -moz-transition-property: width;
+  -moz-transition-duration: 2s;
+  -moz-transition-timing-function: ease-out;
+  width:60px;
+} 
+
+#marginLeftContent { 
+  background: white -moz-linear-gradient(left,  #877,  #fff);
+  width:60px;
+} 
+
+#contentContent { 
+  background: white;
+  -moz-box-flex: 1;
+  display: -moz-box;
+  width: 100%;
+  height: 100%;
+} 
+
+#contentFrame {
+  -moz-box-flex: 1;
+  width: 100%;
+  height: 100%;
+  margin:1em;
+  border:0px;
+  background:none;
 }
 
 #browserHeader > div {
@@ -69,39 +144,86 @@ body {
 }
     </style>
   </head>
-  <body>
+  <body onload="firstRun()">
+
     <div id="outer">
     <div id="browserHeader">
       <div><button id="back">&lt;&lt</button></div>
       <div><button id="forward">&gt;</button></div>
       <div><button id="reload">R</button></div>
-      <div id="urlbox"><form><input id="urlinput" type="text" value="help.html" /></form></div>
+      <div id="urlbox"><form><input id="urlinput" type="text" value="firstrun.html" /></form></div>
       <div id="go"><button id="go">go</button></div>
       <div id="stop"><button id="stop">stop</button></div>
-      <div id="save"><button id="save">save</button></div>
-      <div id="list"><button id="list">list</button></div>
+      <div><button id="dropbox">dropbox</button></div>
+    </div>
+    <div id="panel" style="display:none">
+      You can share this article with Dropbox!
+      <button id="dropbox" onclick="continueDropUpload()">Upload to Dropbox</button>
     </div>
     <div id="browserContentArea">
-      <!-- what if iframes were how the browser HTML embedded web content?
-           what if a new attribute were introduced which controlled priviledge
-           level of content loaded in an iframe? --> 
-      <iframe id="contentFrame" privilege="content"></iframe>
+       
+
+      <div id="sidebarContent">
+        <div id="expand"><button id="expand">expa</button></div>
+        <div id="save"><button id="save">save</button></div>
+        <div id="list"><button id="list">list</button></div>
+        <div id="sidebarFrame">
+        </div>
+      </div>
+      <div id="sidebarRightContent">
+      </div>
+      <div id="marginLeftContent">
+      </div>
+      <div id="contentContent">
+        <iframe id="contentFrame" ></iframe>
+      </div>
     </div>
     </div>
   </body>
-  <!-- Could the browser itself leverage a framework like YUI or jquery?
-       This shouldn't be that much different than slamming YUI into node.js
-       or jquery into jetpacks? -->
-  <script type="text/javascript" src="jquery-min.js"></script>
-  <script type="text/javascript" src="vendor/readability-0.5.1/js/readability.js"></script>
   <script type="text/javascript">
 
 const url = require("url");
+var fileToUpload = null; 
+var dropBoxAuthorized= false; 
 var docFrame = null; 
 // in memory browser history, an array of urls
 var gHistory = [];
 // our current point in history
 var gCurrent = 0;
+function getAppLocalDirectory() { 
+    var userTempDirectory = require('app-paths').tmpDir; 
+    var file = require("file");
+    var path = require("path");
+    return path.join(userTempDirectory, "chromeless-ereader"); 
+} 
+
+function openCatalog() { 
+
+    var outputDir = getAppLocalDirectory();
+    var filesOnDesktop = require('fs').list(outputDir);
+    var orderedList = document.getElementById('sidebarContent');
+    var i=0;
+
+    for (x in filesOnDesktop) {
+      var e = document.createElement('li');
+      e.setAttribute('class','fileitem fileindex'+i);
+      e.setAttribute('draggable','true');
+      e.innerHTML = filesOnDesktop[x];
+      orderedList.appendChild(e);
+      i++;
+    }
+    //dragEnable();
+   
+    $('.fileitem').click(function () { 
+        $('.fileitem').removeClass('selected');
+	$(this).addClass("selected");
+        var path = require("path");
+        var fileToOpen = path.join(getAppLocalDirectory(), $(this).html()); 
+        $('#contentFrame').attr("src","file://"+fileToOpen);
+    });
+
+} 
+
 
 // capture events when the a child iframe changes and update the location bar
 document.getElementById('contentFrame').addEventListener("ChromelessLoadStart", function(e) {
@@ -115,6 +237,10 @@ document.getElementById('contentFrame').addEventListener("ChromelessLoadStart", 
   }
 }, false, true);
 
+function firstRun() { 
+
+} 
+
 function list() { 
 
     var userTempDirectory = require('app-paths').tmpDir; 
@@ -123,14 +249,27 @@ function list() {
     var outputDir = path.join(userTempDirectory, "chromeless-ereader"); 
     var outputDirFile = new file.File(outputDir); 
     if(outputDirFile.isDirectory()) { 
-	var input = document.getElementById("urlinput").value = require('url').fromFilename(outputDir);
-        $("#contentFrame").attr("src", input);
+      var input = document.getElementById("urlinput").value = require('url').fromFilename(outputDir);
+      //$("#contentFrameSidebar").attr("src", input);
     } 
+
+    openCatalog();  
+
+} 
+
+function expa() { 
+	if($("#sidebarContent").attr("class")=="expanded") { 
+	  $("#sidebarContent").removeClass("expanded");
+	  $("#sidebarContent").addClass("collapsed");
+        } else { 
+	  $("#sidebarContent").addClass("expanded");
+	  $("#sidebarContent").removeClass("collapsed");
+        } 
 } 
 
 function save() { 
 
-    var docTitle = $('#contentFrame').contents().find('title').text(); 
+    //var docTitle = $('#contentFrame').contents().find('title').text(); 
     mutation();
     var data = $('#contentFrame').contents().find("html").html();
     var userTempDirectory = require('app-paths').tmpDir; 
@@ -182,6 +321,7 @@ $(document).ready(function() {
     $("#urlbox > form").submit(function() { navigate(); return false; });
     $("#go").click(function() { navigate(); });
     $("#save").click(function() { save(); });
+    $("#expand").click(function() { expa(); });
     $("#list").click(function() { list(); });
     $("#stop").click(function() { stop(); });
     // reload and go are equivalent.  desired?
