@@ -19,7 +19,7 @@ body {
   padding:1em;
 } 
 
-.fileitem { 
+.itemfile, .itemoption { 
   font-size:80%; 
   border-bottom:1px solid gray; 
   padding:.3em;
@@ -27,7 +27,9 @@ body {
   background-color:#eee;
 } 
 
-li.fileitem:hover { 
+
+
+li.itemfile:hover { 
   cursor:pointer;
   -moz-box-shadow: 10px 5px 5px #ccc;
 } 
@@ -39,7 +41,6 @@ li.fileitem:hover {
 
 #browserHeader {
   margin:1em;
-  width: 100%;
   text-align: center;
   padding:2px;
   display: -moz-box;
@@ -54,14 +55,29 @@ li.fileitem:hover {
 #sidebarContent { 
   display: -moz-box;
   -moz-box-orient: vertical;
-  width:2px; 
+  width:0px; 
   height:100%; 
+  overflow:hidden;
+} 
+
+.expanded { 
+  width:200px ! important;
+  overflow:none;
+} 
+
+.collapsed { 
+  width:0px;
 } 
 
 #sidebarRightContent { 
   width:60px; 
   height:100%; 
   background: white -moz-linear-gradient(right,  #544,  transparent);
+} 
+
+#sidebarRightContent:hover { 
+  background: white -moz-linear-gradient(right,  #544, transparent, transparent);
+  cursor:pointer;
 } 
 
 #contentFrameSidebar { 
@@ -80,26 +96,23 @@ li.fileitem:hover {
   height:2px;
 } 
 
-.expanded { 
-  -moz-box-flex:1;
-  width:400px;
-} 
 
-.collapsed { 
-  -moz-transition-property: width;
-  -moz-transition-duration: 2s;
-  -moz-transition-timing-function: ease-out;
-  width:60px;
-} 
 
 #marginLeftContent { 
-  background: white -moz-linear-gradient(left,  #877,  #fff);
+  background: white -moz-linear-gradient(left,  #877,  transparent);
   width:60px;
+} 
+
+#marginLeftContent:hover { 
+  background: white -moz-linear-gradient(left,  #877, transparent,  transparent);
+  width:60px;
+  cursor:pointer;
 } 
 
 #contentContent { 
   background: white;
   -moz-box-flex: 1;
+  -moz-box-orient: vertical;
   display: -moz-box;
   width: 100%;
   height: 100%;
@@ -147,26 +160,9 @@ li.fileitem:hover {
   <body onload="firstRun()">
 
     <div id="outer">
-    <div id="browserHeader">
-      <div><button id="back">&lt;&lt</button></div>
-      <div><button id="forward">&gt;</button></div>
-      <div><button id="reload">R</button></div>
-      <div id="urlbox"><form><input id="urlinput" type="text" value="firstrun.html" /></form></div>
-      <div id="go"><button id="go">go</button></div>
-      <div id="stop"><button id="stop">stop</button></div>
-      <div><button id="dropbox">dropbox</button></div>
-    </div>
-    <div id="panel" style="display:none">
-      You can share this article with Dropbox!
-      <button id="dropbox" onclick="continueDropUpload()">Upload to Dropbox</button>
-    </div>
     <div id="browserContentArea">
        
-
       <div id="sidebarContent">
-        <div id="expand"><button id="expand">expa</button></div>
-        <div id="save"><button id="save">save</button></div>
-        <div id="list"><button id="list">list</button></div>
         <div id="sidebarFrame">
         </div>
       </div>
@@ -175,6 +171,17 @@ li.fileitem:hover {
       <div id="marginLeftContent">
       </div>
       <div id="contentContent">
+      <div id="contentBrowserToolbar">
+    <div id="browserHeader">
+      <div><button id="back">&lt;&lt</button></div>
+      <div><button id="forward">&gt;</button></div>
+        <div id="save"><button id="save">save</button></div>
+      <div><button id="reload">R</button></div>
+      <div id="urlbox"><form><input id="urlinput" type="text" value="firstrun.html" /></form></div>
+      <div id="go"><button id="go">go</button></div>
+      <div id="stop"><button id="stop">stop</button></div>
+    </div>
+      </div>
         <iframe id="contentFrame" onload="fixScroll()"></iframe>
       </div>
     </div>
@@ -199,6 +206,7 @@ function getAppLocalDirectory() {
 
 function openCatalog() { 
 
+    $('#sidebarContent').html("<div class='itemoption'>Home</div>");
     var outputDir = getAppLocalDirectory();
     var filesOnDesktop = require('fs').list(outputDir);
     var orderedList = document.getElementById('sidebarContent');
@@ -206,20 +214,29 @@ function openCatalog() {
 
     for (x in filesOnDesktop) {
       var e = document.createElement('li');
-      e.setAttribute('class','fileitem fileindex'+i);
+      e.setAttribute('class','itemfile fileindex'+i);
       e.setAttribute('draggable','true');
       e.innerHTML = filesOnDesktop[x];
       orderedList.appendChild(e);
       i++;
     }
-    //dragEnable();
+    //dragEnable(); // check fileitem -> itemfile, we renamed here 
    
-    $('.fileitem').click(function () { 
-        $('.fileitem').removeClass('selected');
+    $('.itemfile').click(function () { 
+        $('.itemfile').removeClass('selected');
+        $('.itemoption').removeClass('selected');
 	$(this).addClass("selected");
         var path = require("path");
         var fileToOpen = path.join(getAppLocalDirectory(), $(this).html()); 
         $('#contentFrame').attr("src","file://"+fileToOpen);
+        document.getElementById('contentBrowserToolbar').style.display="none";
+    });
+
+    $('.itemoption').click(function () { 
+        $('.itemfile').removeClass('selected');
+        $(this).addClass("selected");
+        var path = require("path");
+        document.getElementById('contentBrowserToolbar').style.display="block";
     });
 
 } 
@@ -334,8 +351,6 @@ $(document).ready(function() {
     $("#urlbox > form").submit(function() { navigate(); return false; });
     $("#go").click(function() { navigate(); });
     $("#save").click(function() { save(); });
-    $("#expand").click(function() { expa(); });
-    $("#list").click(function() { list(); });
     $("#stop").click(function() { stop(); });
     // reload and go are equivalent.  desired?
     $("#reload").click(function() { navigate(); });
@@ -347,7 +362,15 @@ $(document).ready(function() {
       if (!gHistory.length || gCurrent == gHistory.length - 1) return;
       $("#contentFrame").attr("src", gHistory[++gCurrent]);
     });
+    $("#marginLeftContent").click(function () { 
+      require("fullscreen").toggle(window);
+    });
+    $("#sidebarRightContent").click(function () { 
+        expa();
+    });
+    list();
 });
+
 
   </script>
 </html>
