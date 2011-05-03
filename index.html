@@ -199,7 +199,6 @@ var gHistory = [];
 var gCurrent = 0;
 function getAppLocalDirectory() { 
     var userTempDirectory = require('app-paths').tmpDir; 
-    var file = require("file");
     var path = require("path");
     return path.join(userTempDirectory, "chromeless-ereader"); 
 } 
@@ -273,6 +272,7 @@ function fixScroll() {
 
 function list() { 
 
+/*
     var userTempDirectory = require('app-paths').tmpDir; 
     var file = require("file");
     var path = require("path");
@@ -283,6 +283,7 @@ function list() {
       //$("#contentFrameSidebar").attr("src", input);
     } 
 
+*/
     openCatalog();  
 
 } 
@@ -299,19 +300,21 @@ function expa() {
 
 function save() { 
 
-    //var docTitle = $('#contentFrame').contents().find('title').text(); 
+    var docTitle = $('#contentFrame').contents().find('title').text(); 
     mutation();
     var data = $('#contentFrame').contents().find("html").html();
     var userTempDirectory = require('app-paths').tmpDir; 
     var file = require("file");
     var path = require("path");
     var outputDir = path.join(userTempDirectory, "chromeless-ereader"); 
-    var outputDirFile = new file.File(outputDir); 
+    try { 
+       var fs = require("fs");
+       fs.mkpath(outputDir);
+    } catch(i) { } 
 
     try { 
-       file.mkpath(outputDir);
-    } catch(i) { } 
-    file.write(require('path').join(outputDir,docTitle + ".html"),data);
+        file.write(require('path').join(outputDir,docTitle + ".html"),data);
+    } catch (i) { console.log(i) } 
 } 
 
 function mutation() { 	

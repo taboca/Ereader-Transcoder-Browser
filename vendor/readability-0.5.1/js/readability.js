@@ -1,8 +1,7 @@
 
 
 var dbg = function(s) {
-	if(typeof console !== 'undefined')
-		console.log("Readability: " + s);
+	//if(typeof console !== 'undefined') console.log("Readability: " + s);
 };
 
 /*
