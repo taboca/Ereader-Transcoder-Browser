@@ -175,7 +175,7 @@ li.fileitem:hover {
       <div id="marginLeftContent">
       </div>
       <div id="contentContent">
-        <iframe id="contentFrame" ></iframe>
+        <iframe id="contentFrame" onload="fixScroll()"></iframe>
       </div>
     </div>
     </div>
@@ -240,6 +240,17 @@ document.getElementById('contentFrame').addEventListener("ChromelessLoadStart", 
 function firstRun() { 
 
 } 
+
+// This is experimental to invert the scroll
+function fixScroll() { 
+   document.getElementById("contentFrame").contentDocument.addEventListener("DOMMouseScroll",function handle(e) { 
+
+      e.preventDefault();
+      e.stopPropagation();
+      document.getElementById("contentFrame").contentWindow.scrollBy(0,-4*e.detail);
+       
+   }, false);
+}
 
 function list() { 
 
