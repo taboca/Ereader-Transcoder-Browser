@@ -243,6 +243,8 @@ function firstRun() {
 
 // This is experimental to invert the scroll
 function fixScroll() { 
+
+   document.getElementById("contentFrame").style.overflow="hidden";
    document.getElementById("contentFrame").contentDocument.addEventListener("DOMMouseScroll",function handle(e) { 
 
       e.preventDefault();
