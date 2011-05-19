@@ -1,34 +1,30 @@
 
 body {
-  padding: 0;
   margin: 0;
 }
 
-#panel { 
-  margin:1em;
-  background-color:lightblue;
-  padding:1em;
+#outer {
+  width: 100%;
+  height: 100%;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+}
+
+#inner {
+  -moz-box-flex: 1;
+  display: -moz-box;
+}
+
+/* Items stacked on the left side */
+
+li.itemfile, li.itemoption { 
 } 
-
-.itemfile, .itemoption { 
-  font-size:80%; 
-  border-bottom:1px solid gray; 
-  padding:.3em;
-  margin:.5em;
-  background-color:#eee;
-} 
-
-
 
 li.itemfile:hover { 
-  cursor:pointer;
-  -moz-box-shadow: 10px 5px 5px #ccc;
 } 
  
-.selected { 
-  -moz-box-shadow: 10px 5px 5px black;
+li.selected { 
 } 
-
 
 #browserHeader {
   margin:1em;
@@ -36,11 +32,6 @@ li.itemfile:hover {
   padding:2px;
   display: -moz-box;
   -moz-box-orient: horizontal;
-}
-
-#browserContentArea {
-  -moz-box-flex: 1;
-  display: -moz-box;
 }
 
 #sidebarContent { 
@@ -61,44 +52,21 @@ li.itemfile:hover {
 } 
 
 #sidebarRightContent { 
-  width:60px; 
-  height:100%; 
-  background: white -moz-linear-gradient(right,  #544,  transparent);
 } 
 
 #sidebarRightContent:hover { 
-  background: white -moz-linear-gradient(right,  #544, transparent, transparent);
-  cursor:pointer;
-} 
-
-#contentFrameSidebar { 
-  -moz-box-flex: 1;
-  width: 100%;
-  height: 100%;
-  margin:1em;
-  border:0px;
-  background:none;
-} 
-
-
-.line { 
-  background: white -moz-linear-gradient(right,  #555, transparent, transparent);
-  width:100%;
-  height:2px;
 } 
 
 #marginLeftContent { 
-  background: white -moz-linear-gradient(left,  #877,  transparent);
   width:60px;
 } 
 
 #marginLeftContent:hover { 
-  background: white -moz-linear-gradient(left,  #877, transparent,  transparent);
   width:60px;
   cursor:pointer;
 } 
 
-#contentContent { 
+#mainContent { 
   background: white;
   -moz-box-flex: 1;
   -moz-box-orient: vertical;
@@ -107,11 +75,10 @@ li.itemfile:hover {
   height: 100%;
 } 
 
-#contentFrame {
+#browserFrame {
   -moz-box-flex: 1;
   width: 100%;
   height: 100%;
-  margin:1em;
   border:0px;
   background:none;
 }
@@ -137,10 +104,3 @@ li.itemfile:hover {
  font-size: .8em;
 }
 
-#outer {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  display: -moz-box;
-  -moz-box-orient: vertical;
-}

@@ -1,43 +1,45 @@
 <html>
   <head>
-  <script type="text/javascript" src="vendor/jquery-min.js"></script>
-  <script type="text/javascript" src="vendor/readability-0.5.1/js/readability.js"></script>
-  </head>
-
+    <script type="text/javascript" src="vendor/jquery-min.js"></script>
+    <script type="text/javascript" src="vendor/readability-0.5.1/js/readability.js"></script>
+    <link media="screen, projection" type="text/css" href="style/main.css" rel="stylesheet" />
+    <link media="screen, projection" type="text/css" href="skins/book.css" rel="stylesheet" />
     <title>WebbyFox</title>
-
-      <link media="screen, projection" type="text/css" href="style/main.css" rel="stylesheet">
-
   </head>
   <body onload="firstRun()">
 
     <div id="outer">
-    <div id="browserContentArea">
+
+    <div id="inner">
        
       <div id="sidebarContent">
-        <div id="sidebarFrame">
+        <div id="sidebarFrame"></div>
+      </div>
+
+      <div id="sidebarRightContent"></div>
+      <div id="marginLeftContent"></div>
+
+      <div id="mainContent">
+
+        <div id="contentBrowserToolbar">
+          <div id="browserHeader">
+            <div><button id="back">&lt;&lt</button></div>
+            <div><button id="forward">&gt;</button></div>
+            <div id="save"><button id="save">save</button></div>
+            <div id="reverse"><button id="reverse">reverse</button></div>
+            <div><button id="reload">R</button></div>
+            <div id="urlbox"><form><input id="urlinput" type="text" value="firstrun.html" /></form></div>
+            <div id="go"><button id="go">go</button></div>
+            <div id="stop"><button id="stop">stop</button></div>
+          </div>
         </div>
+
+        <iframe id="browserFrame" onload="fixScroll()"></iframe>
+
       </div>
-      <div id="sidebarRightContent">
-      </div>
-      <div id="marginLeftContent">
-      </div>
-      <div id="contentContent">
-      <div id="contentBrowserToolbar">
-    <div id="browserHeader">
-      <div><button id="back">&lt;&lt</button></div>
-      <div><button id="forward">&gt;</button></div>
-        <div id="save"><button id="save">save</button></div>
-        <div id="reverse"><button id="reverse">reverse</button></div>
-      <div><button id="reload">R</button></div>
-      <div id="urlbox"><form><input id="urlinput" type="text" value="firstrun.html" /></form></div>
-      <div id="go"><button id="go">go</button></div>
-      <div id="stop"><button id="stop">stop</button></div>
+
     </div>
-      </div>
-        <iframe id="contentFrame" onload="fixScroll()"></iframe>
-      </div>
-    </div>
+
     </div>
   </body>
   <script type="text/javascript">
@@ -79,7 +81,7 @@ function openCatalog() {
 	$(this).addClass("selected");
         var path = require("path");
         var fileToOpen = path.join(getAppLocalDirectory(), $(this).html()); 
-        $('#contentFrame').attr("src","file://"+fileToOpen);
+        $('#browserFrame').attr("src","file://"+fileToOpen);
         document.getElementById('contentBrowserToolbar').style.display="none";
     });
 
@@ -94,7 +96,7 @@ function openCatalog() {
 
 
 // capture events when the a child iframe changes and update the location bar
-document.getElementById('contentFrame').addEventListener("ChromelessLoadStart", function(e) {
+document.getElementById('browserFrame').addEventListener("ChromelessLoadStart", function(e) {
   $("#urlinput").val(e.url);
   // very rudimentary history management, if the url that has been loaded
   // is not what is currently in history, let's append it, and reset
@@ -112,32 +114,18 @@ function firstRun() {
 // This is experimental to invert the scroll
 function fixScroll() { 
 
-   document.getElementById("contentFrame").style.overflow="hidden";
-   document.getElementById("contentFrame").contentDocument.addEventListener("DOMMouseScroll",function handle(e) { 
+   document.getElementById("browserFrame").style.overflow="hidden";
+   document.getElementById("browserFrame").contentDocument.addEventListener("DOMMouseScroll",function handle(e) { 
 
       e.preventDefault();
       e.stopPropagation();
-      document.getElementById("contentFrame").contentWindow.scrollBy(0,-4*e.detail);
+      document.getElementById("browserFrame").contentWindow.scrollBy(0,-4*e.detail);
        
    }, false);
 }
 
 function list() { 
-
-/*
-    var userTempDirectory = require('app-paths').tmpDir; 
-    var file = require("file");
-    var path = require("path");
-    var outputDir = path.join(userTempDirectory, "chromeless-ereader"); 
-    var outputDirFile = new file.File(outputDir); 
-    if(outputDirFile.isDirectory()) { 
-      var input = document.getElementById("urlinput").value = require('url').fromFilename(outputDir);
-      //$("#contentFrameSidebar").attr("src", input);
-    } 
-
-*/
     openCatalog();  
-
 } 
 
 function expa() { 
@@ -152,9 +140,9 @@ function expa() {
 
 function save() { 
 
-    var docTitle = $('#contentFrame').contents().find('title').text(); 
+    var docTitle = $('#browserFrame').contents().find('title').text(); 
     mutation();
-    var data = $('#contentFrame').contents().find("html").html();
+    var data = $('#browserFrame').contents().find("html").html();
     var userTempDirectory = require('app-paths').tmpDir; 
     var file = require("file");
     var path = require("path");
@@ -174,7 +162,7 @@ function mutation() {
 	readStyle='style-plain';
 	readSize='size-medium';
 	readMargin='margin-wide';
-	docFrame = document.getElementById("contentFrame").contentDocument; 
+	docFrame = document.getElementById("browserFrame").contentDocument; 
 	readability.init();
         var style = docFrame.createElement('style');
         docFrame.getElementsByTagName('head')[0].innerHTML="";
@@ -186,7 +174,7 @@ function mutation() {
 $(document).ready(function() {
 
     function stop () { 
-      var frame = document.getElementById("contentFrame");
+      var frame = document.getElementById("browserFrame");
       require("iframe-controls").stopload(frame);
     } 
 
@@ -198,7 +186,7 @@ $(document).ready(function() {
         input = url.guess(input);
 
         // now trigger navigation
-        $("#contentFrame").attr("src", input);
+        $("#browserFrame").attr("src", input);
     }
 
     // both enter in the urlbox and clicking the go button do the same thing,
@@ -212,11 +200,11 @@ $(document).ready(function() {
     $("#reload").click(function() { navigate(); });
     $("#back").click(function() {
       if (gCurrent == 0) return;
-      $("#contentFrame").attr("src", gHistory[--gCurrent]);
+      $("#browserFrame").attr("src", gHistory[--gCurrent]);
     });
     $("#forward").click(function() {
       if (!gHistory.length || gCurrent == gHistory.length - 1) return;
-      $("#contentFrame").attr("src", gHistory[++gCurrent]);
+      $("#browserFrame").attr("src", gHistory[++gCurrent]);
     });
     $("#marginLeftContent").click(function () { 
       require("fullscreen").toggle(window);
