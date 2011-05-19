@@ -1,0 +1,146 @@
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#panel { 
+  margin:1em;
+  background-color:lightblue;
+  padding:1em;
+} 
+
+.itemfile, .itemoption { 
+  font-size:80%; 
+  border-bottom:1px solid gray; 
+  padding:.3em;
+  margin:.5em;
+  background-color:#eee;
+} 
+
+
+
+li.itemfile:hover { 
+  cursor:pointer;
+  -moz-box-shadow: 10px 5px 5px #ccc;
+} 
+ 
+.selected { 
+  -moz-box-shadow: 10px 5px 5px black;
+} 
+
+
+#browserHeader {
+  margin:1em;
+  text-align: center;
+  padding:2px;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+}
+
+#browserContentArea {
+  -moz-box-flex: 1;
+  display: -moz-box;
+}
+
+#sidebarContent { 
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  width:0px; 
+  height:100%; 
+  overflow:hidden;
+} 
+
+.expanded { 
+  width:200px ! important;
+  overflow:none;
+} 
+
+.collapsed { 
+  width:0px;
+} 
+
+#sidebarRightContent { 
+  width:60px; 
+  height:100%; 
+  background: white -moz-linear-gradient(right,  #544,  transparent);
+} 
+
+#sidebarRightContent:hover { 
+  background: white -moz-linear-gradient(right,  #544, transparent, transparent);
+  cursor:pointer;
+} 
+
+#contentFrameSidebar { 
+  -moz-box-flex: 1;
+  width: 100%;
+  height: 100%;
+  margin:1em;
+  border:0px;
+  background:none;
+} 
+
+
+.line { 
+  background: white -moz-linear-gradient(right,  #555, transparent, transparent);
+  width:100%;
+  height:2px;
+} 
+
+#marginLeftContent { 
+  background: white -moz-linear-gradient(left,  #877,  transparent);
+  width:60px;
+} 
+
+#marginLeftContent:hover { 
+  background: white -moz-linear-gradient(left,  #877, transparent,  transparent);
+  width:60px;
+  cursor:pointer;
+} 
+
+#contentContent { 
+  background: white;
+  -moz-box-flex: 1;
+  -moz-box-orient: vertical;
+  display: -moz-box;
+  width: 100%;
+  height: 100%;
+} 
+
+#contentFrame {
+  -moz-box-flex: 1;
+  width: 100%;
+  height: 100%;
+  margin:1em;
+  border:0px;
+  background:none;
+}
+
+#browserHeader > div {
+  margin-right: 2px;
+  margin-left: 2px;
+}
+
+#urlbox {
+  -moz-box-flex: 1;
+}
+
+#urlbox form {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+#urlinput {
+ width: 100%;
+ padding: 2px;
+ font-size: .8em;
+}
+
+#outer {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+}
