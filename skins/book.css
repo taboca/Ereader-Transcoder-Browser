@@ -11,10 +11,10 @@
 
 li.itemfile:hover { 
   cursor:pointer;
-  -moz-box-shadow: 10px 5px 5px #ccc;
+  -moz-box-shadow: 10px 5px 5px #888;
 } 
 .selected { 
-  -moz-box-shadow: 10px 5px 5px black;
+  -moz-box-shadow: 10px 5px 5px #888;
 } 
 
 #browserHeader {

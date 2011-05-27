@@ -1,14 +1,18 @@
 <html>
   <head>
+
     <script type="text/javascript" src="vendor/jquery-min.js"></script>
     <script type="text/javascript" src="vendor/readability-0.5.1/js/readability.js"></script>
+    <script type="text/javascript" src="dragdrop.js"></script>
+
     <link media="screen, projection" type="text/css" href="style/main.css" rel="stylesheet" />
     <link media="screen, projection" type="text/css" href="skins/book.css" rel="stylesheet" />
+
     <title>WebbyFox</title>
   </head>
   <body onload="firstRun()">
 
-    <div id="outer">
+    <div id="outer" ondragover="event.preventDefault(); event.stopPropagation();" ondrop="onDrop(event);">
 
     <div id="inner">
        
@@ -19,22 +23,27 @@
       <div id="sidebarRightContent"></div>
       <div id="marginLeftContent"></div>
 
-      <div id="mainContent">
+      <div id="mainContent" >
 
-        <div id="contentBrowserToolbar">
+        <div id="contentToolbar">
+
+          <h1>Welcome to the Chromeless E-reader Project</h1>
+	  <p>Paste or drag an article URL in the next field to transform it in an e-reader optimized form.</p>
           <div id="browserHeader">
-            <div><button id="back">&lt;&lt</button></div>
+  	    <!--
+            <div><button id="reload">R</button></div>
+	    -->
+            <div id="urlbox"><form><input id="urlinput" type="text" value="" /></form></div>
+            <div id="browserButtons">
+            <div id="go"><button id="go">go</button></div>
+            <div><button id="back">&lt;</button></div>
             <div><button id="forward">&gt;</button></div>
             <div id="save"><button id="save">save</button></div>
-            <div id="reverse"><button id="reverse">reverse</button></div>
-            <div><button id="reload">R</button></div>
-            <div id="urlbox"><form><input id="urlinput" type="text" value="firstrun.html" /></form></div>
-            <div id="go"><button id="go">go</button></div>
-            <div id="stop"><button id="stop">stop</button></div>
+            </div>
           </div>
         </div>
 
-        <iframe id="browserFrame" onload="fixScroll()"></iframe>
+        <iframe id="browserFrame" src="about:blank" onload="fixReader()"></iframe>
 
       </div>
 
@@ -81,41 +90,48 @@ function openCatalog() {
 	$(this).addClass("selected");
         var path = require("path");
         var fileToOpen = path.join(getAppLocalDirectory(), $(this).html()); 
+        document.getElementById('contentToolbar').style.display="none";
         $('#browserFrame').attr("src","file://"+fileToOpen);
-        document.getElementById('contentBrowserToolbar').style.display="none";
     });
 
     $('.itemoption').click(function () { 
         $('.itemfile').removeClass('selected');
         $(this).addClass("selected");
         var path = require("path");
-        document.getElementById('contentBrowserToolbar').style.display="block";
+        document.getElementById('contentToolbar').style.display="block";
+        $('#browserFrame').attr("src","about:blank");
     });
 
 } 
-
-
-// capture events when the a child iframe changes and update the location bar
-document.getElementById('browserFrame').addEventListener("ChromelessLoadStart", function(e) {
-  $("#urlinput").val(e.url);
-  // very rudimentary history management, if the url that has been loaded
-  // is not what is currently in history, let's append it, and reset
-  // the history pointer
-  if (e.url !== gHistory[gCurrent]) {
-    gHistory.push(e.url);
-    gCurrent = gHistory.length - 1; 
-  }
-}, false, true);
 
 function firstRun() { 
 
 } 
 
-// This is experimental to invert the scroll
-function fixScroll() { 
+function fixUpToolbar() { 
+   document.getElementById("browserButtons").style.display="-moz-box";
+} 
 
-   document.getElementById("browserFrame").style.overflow="hidden";
-   document.getElementById("browserFrame").contentDocument.addEventListener("DOMMouseScroll",function handle(e) { 
+// This is experimental to invert the scroll
+function fixReader() { 
+
+  var pm = require('web-content').ProgressMonitor();
+  var i = document.getElementById("browserFrame");
+  pm.attach(i);
+
+  pm.on("load-stop", function (e) {
+    //save();
+
+  });
+
+  pm.on("progress", function (percent) {
+    document.getElementById("urlinput").setAttribute("style","background-position:"+parseInt(percent*5)+"px 0px");
+    console.log(percent);
+  });
+
+  document.getElementById("urlinput").onfocus=fixUpToolbar;
+  document.getElementById("browserFrame").style.overflow="hidden";
+  document.getElementById("browserFrame").contentDocument.addEventListener("DOMMouseScroll",function handle(e) { 
 
       e.preventDefault();
       e.stopPropagation();
@@ -140,8 +156,8 @@ function expa() {
 
 function save() { 
 
-    var docTitle = $('#browserFrame').contents().find('title').text(); 
     mutation();
+    var docTitle = $('#browserFrame').contents().find('title').text(); 
     var data = $('#browserFrame').contents().find("html").html();
     var userTempDirectory = require('app-paths').tmpDir; 
     var file = require("file");

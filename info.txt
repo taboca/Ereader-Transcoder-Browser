@@ -1,0 +1,5 @@
+#browserContentArea {
+  -moz-box-flex: 1;
+  display: -moz-box;
+}
+

@@ -15,6 +15,14 @@ body {
   display: -moz-box;
 }
 
+#mainContent { 
+
+} 
+
+.draggingFileOverMe { 
+   background-color:#ccc ! important;
+} 
+
 /* Items stacked on the left side */
 
 li.itemfile, li.itemoption { 
@@ -27,12 +35,43 @@ li.selected {
 } 
 
 #browserHeader {
-  margin:1em;
   text-align: center;
   padding:2px;
+  -moz-box-flex: 1;
+  width:100%;
   display: -moz-box;
   -moz-box-orient: horizontal;
 }
+
+#browserButtons { 
+  display:none;
+  -moz-box-orient: horizontal;
+} 
+
+button { 
+  -moz-border-radius:18px; 
+  background-color:lightblue; 
+  padding:.5em;
+  border:0px;
+  margin-left:2px;
+  -moz-box-shadow: 0 0 10px #888;
+} 
+
+button:hover { 
+  background-color:white; 
+} 
+
+button#back { 
+  -moz-border-radius:18px; 
+  -moz-border-radius-topright:0px; 
+  -moz-border-radius-bottomright:0px; 
+} 
+
+button#forward { 
+  -moz-border-radius:18px; 
+  -moz-border-radius-topleft:0px; 
+  -moz-border-radius-bottomleft:0px; 
+} 
 
 #sidebarContent { 
   display: -moz-box;
@@ -67,12 +106,15 @@ li.selected {
 } 
 
 #mainContent { 
-  background: white;
   -moz-box-flex: 1;
   -moz-box-orient: vertical;
   display: -moz-box;
   width: 100%;
   height: 100%;
+} 
+
+#contentToolbar { 
+   padding:1em;
 } 
 
 #browserFrame {
@@ -99,8 +141,9 @@ li.selected {
 }
 
 #urlinput {
+ background: lightblue url(bg.png) 0% 0 no-repeat; 
  width: 100%;
- padding: 2px;
  font-size: .8em;
+ padding: .5em ! important;
 }
 
