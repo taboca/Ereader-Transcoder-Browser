@@ -48,6 +48,13 @@ li.selected {
   -moz-box-orient: horizontal;
 } 
 
+.config { 
+  margin-top:.5em;
+  -moz-border-radius:18px; 
+  background-color:lightblue; 
+  padding:.5em;
+} 
+
 button { 
   -moz-border-radius:18px; 
   background-color:lightblue; 
