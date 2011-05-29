@@ -1,8 +1,8 @@
 {
     "build_id": "20110527160949", 
-    "vendor": "Unknown", 
-    "name": "My First Browser", 
-    "developer_email": "unknown@unknown.com", 
+    "vendor": "Mozilla Labs", 
+    "name": "Chromeless E-reader", 
+    "developer_email": "mgalli@mgalli.com", 
     "module_dirs": [], 
     "version": "0.1", 
     "enableSystemPrivileges": true
